@@ -4,22 +4,22 @@ Api For RomanTranslation (word to word)
 
 access using query
 
-https://romantranslation.onrender.com/transliterate/?language=pa&text=ਨਮਸਤੇ
+https://romantranslation.onrender.com/transliterate/?text=ਨਮਸਤੇ
   
 response:  ->>>>   
 
 {
-  "transliterated_text": "namasate"
+  "transliterated_text":"namaste",
+  "detected_language":"hi"
 }
 
 
 access using requestBody 
 
 curl -X 'POST' \
-  'https://romantranslation.onrender.com/transliterate/' \
+  'http://127.0.0.1:8000/transliterate/' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "text": "नमस्ते",
-  "language": "hi"
+  "text": "नमस्ते"
 }'
