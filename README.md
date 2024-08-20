@@ -10,7 +10,7 @@ response:  ->>>>
 
 {
   "transliterated_text":"namaste",
-  "detected_language":"hi"
+  "detected_language":"pa"
 }
 
 
