@@ -1,24 +1,38 @@
-from indic_transliteration import sanscript
-from enum import Enum
-from typing import Literal, Union
-from fastapi import Body, FastAPI , Query, Path
+from fastapi import Body, FastAPI , Query, Path, Request
 from pydantic import BaseModel, EmailStr, Field, HttpUrl
- 
+from indic_transliteration import sanscript
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from langdetect import detect, DetectorFactory
 
 
 app = FastAPI()
 
-class Language(str, Enum):
-    hindi = "hi"
-    punjabi = "pa"
-    # Add other languages as needed
 
-def transliterate_to_roman(text: str, source_Lang: Language) -> str:
-    script_map = {
-        Language.hindi: sanscript.DEVANAGARI,
-        Language.punjabi: sanscript.GURMUKHI,
+class TransliterationRequest(BaseModel):
+    text: str
+    language: str = None  
+
+def detect_language(text: str) -> str:
+    try:
+        lang = detect(text)
+        if lang == 'hi':
+            return 'hi'
+        elif lang == 'pa':
+            return 'pa'
+        # Add more mappings as needed
+        else:
+            return 'hi'  # Default to Hindi if unsure
+    except:
+        return 'hi'  # Default to Hindi on detection failure
+
+def transliterate_to_roman(text: str, source_language: str) -> str:
+    language_map = {
+        'hi': sanscript.DEVANAGARI,
+        'pa': sanscript.GURMUKHI,
+        # Add other languages as needed
     }
-    roman_text = sanscript.transliterate(text, script_map[source_Lang], sanscript.ITRANS)
+    roman_text = sanscript.transliterate(text, language_map.get(source_language, ""), sanscript.ITRANS)
     corrected_text = correct_transliteration(roman_text)
     return corrected_text
 
@@ -26,18 +40,36 @@ def correct_transliteration(text: str) -> str:
     corrected_text = text.replace('M', 'n').lower()
     return corrected_text
 
-class TransliterationRequest(BaseModel):
-    text: str = Field(..., example="नमस्ते")
-    language: Language = Field(..., example="hi")
+def preprocess_text(text: str) -> str:
+    if text.startswith('"') and text.endswith('"'):
+        text = text[1:-1]
+    return text
 
 @app.post("/transliterate/")
 async def transliterate(request: TransliterationRequest):
-    transliterated_text = transliterate_to_roman(request.text, request.language)
-    return {"transliterated_text": transliterated_text}
-
+    processed_text = preprocess_text(request.text)
+    source_language = request.language or detect_language(processed_text)
+    result = transliterate_to_roman(processed_text, source_language)
+    return {"transliterated_text": result, "detected_language": source_language}
 
 @app.get("/transliterate/")
 async def transliterate_query(text: str = Query(..., example="ਨਮਸਤੇ"),
-                              language: Language = Query(..., example="pa")):
-    transliterated_text = transliterate_to_roman(text, language)
-    return {"transliterated_text": transliterated_text}
+                              language: str = Query(None)):
+    source_language = language or detect_language(text)
+    transliterated_text = transliterate_to_roman(text, source_language)
+    return {"transliterated_text": transliterated_text, "detected_language": source_language}
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = exc.errors()
+    error_details = []
+    for error in errors:
+        loc = error.get("loc", [])
+        if loc:
+            field = loc[-1]
+            error_details.append(f"Input field '{field}' is missing.")
+    return JSONResponse(
+        status_code=400,
+        content={"detail": error_details},
+    )
+
