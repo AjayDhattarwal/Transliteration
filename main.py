@@ -18,7 +18,7 @@ def transliterate_to_roman(text: str, source_Lang: Language) -> str:
         Language.hindi: sanscript.DEVANAGARI,
         Language.punjabi: sanscript.GURMUKHI,
     }
-    roman_text = sanscript.transliterate(text, script_map[source_script], sanscript.ITRANS)
+    roman_text = sanscript.transliterate(text, script_map[source_Lang], sanscript.ITRANS)
     corrected_text = correct_transliteration(roman_text)
     return corrected_text
 
