@@ -1,7 +1,7 @@
 # RomanTranslation 
 
 Api For RomanTranslation (word to word)
-
+note : For first response it may take upto 50sec 
 access using query
 
 https://romantranslation.onrender.com/transliterate/?text=ਨਮਸਤੇ
@@ -17,7 +17,7 @@ response:  ->>>>
 access using requestBody 
 
 curl -X 'POST' \
-  'http://127.0.0.1:8000/transliterate/' \
+  'https://romantranslation.onrender.com/transliterate/' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
