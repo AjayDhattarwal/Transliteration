@@ -9,7 +9,7 @@ The Transliteration API provides a service to convert text from one script to an
 
 ### 1. Query Parameter Access
 
-**GET** `https://romantranslation.onrender.com/transliterate/?text={ਨਮਸਤੇ}`
+**GET** `https://romantranslation.onrender.com/transliterate/?text=ਨਮਸਤੇ`
 
 **Example Request:**
 
