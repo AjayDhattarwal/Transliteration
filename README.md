@@ -1,25 +1,51 @@
-# RomanTranslation 
 
-Api For RomanTranslation (word to word)
-note : For first response it may take upto 50sec 
-access using query
+# Transliteration API
 
-https://romantranslation.onrender.com/transliterate/?text=ਨਮਸਤੇ
-  
-response:  ->>>>   
+## Overview
 
+The Transliteration API provides a service to convert text from one script to another while preserving its original pronunciation. This process is known as transliteration.
+
+## Endpoints
+
+### 1. Query Parameter Access
+
+**GET** `https://romantranslation.onrender.com/transliterate/?text={text}`
+
+**Example Request:**
+
+
+**Response:**
+
+```json
 {
-  "transliterated_text":"namaste",
-  "detected_language":"pa"
+  "transliterated_text": "namaste",
+  "detected_language": "pa"
 }
 
+```
 
-access using requestBody 
 
-curl -X 'POST' \
+### 2. POST Request
+
+`curl -X 'POST' \
   'https://romantranslation.onrender.com/transliterate/' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
   "text": "नमस्ते"
-}'
+}'`
+
+
+**Response:**
+
+```json
+{
+  "transliterated_text": "namaste",
+  "detected_language": "hi"
+}
+
+```
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
