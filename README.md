@@ -48,4 +48,4 @@ The Transliteration API provides a service to convert text from one script to an
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/AjayDhattarwal/Transliteration/blob/main/LICENSE)
